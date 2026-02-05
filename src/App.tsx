@@ -13,11 +13,20 @@ interface Message {
   prompt?: string;
 }
 
+interface LogEntry {
+  id: string;
+  message: string;
+  type: 'info' | 'warn' | 'error' | 'agent';
+  timestamp: number;
+}
+
 function App() {
   const [status, setStatus] = useState({ online: false, lastSeen: 0 });
   const [command, setCommand] = useState('');
   const [history, setHistory] = useState<Message[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const [view, setView] = useState<'activity' | 'debug'>('activity');
 
   useEffect(() => {
     // Listen for Online Status
@@ -43,6 +52,16 @@ function App() {
 
         setHistory(combined);
       });
+    });
+    // Listen for Logs
+    const logsRef = ref(db, 'bridge/logs');
+    onValue(logsRef, (snapshot: DataSnapshot) => {
+      const data = snapshot.val() || {};
+      const combinedLogs = Object.keys(data).map(id => ({
+        id,
+        ...data[id]
+      })).sort((a, b) => b.timestamp - a.timestamp).slice(0, 50);
+      setLogs(combinedLogs);
     });
   }, []);
 
@@ -103,39 +122,66 @@ function App() {
       </div>
 
       <div className="glass-card" style={{ marginTop: '2rem', textAlign: 'left' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem', opacity: 0.8 }}>
-          <Terminal size={18} />
-          <h3 style={{ margin: 0 }}>Activity Log</h3>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.8 }}>
+            <Terminal size={18} />
+            <h3 style={{ margin: 0 }}>Terminal</h3>
+          </div>
+          <div className="tab-group" style={{ display: 'flex', gap: '10px' }}>
+            <button
+              onClick={() => setView('activity')}
+              className={`tab-btn ${view === 'activity' ? 'active' : ''}`}
+              style={{ padding: '4px 12px', fontSize: '0.8rem', borderRadius: '4px', border: 'none', cursor: 'pointer', background: view === 'activity' ? '#a855f7' : 'rgba(255,255,255,0.1)' }}
+            >Activity</button>
+            <button
+              onClick={() => setView('debug')}
+              className={`tab-btn ${view === 'debug' ? 'active' : ''}`}
+              style={{ padding: '4px 12px', fontSize: '0.8rem', borderRadius: '4px', border: 'none', cursor: 'pointer', background: view === 'debug' ? '#a855f7' : 'rgba(255,255,255,0.1)' }}
+            >Debug Logs</button>
+          </div>
         </div>
 
         <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-          {history.length === 0 ? (
-            <p style={{ opacity: 0.3, textAlign: 'center', padding: '2rem' }}>No recent activity</p>
-          ) : (
-            history.map((item) => (
-              <div key={item.id} className="history-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <span style={{ fontWeight: 600, color: '#a855f7' }}>{item.action}</span>
-                  <span style={{ fontSize: '0.8rem', opacity: 0.4 }}>
-                    {new Date(item.timestamp).toLocaleTimeString()}
-                  </span>
-                </div>
-                <p style={{ margin: '4px 0', opacity: 0.8 }}>{item.prompt || 'Local system action'}</p>
-                {item.result && (
-                  <div style={{
-                    marginTop: '10px',
-                    padding: '12px',
-                    background: 'rgba(0,0,0,0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    fontFamily: 'monospace',
-                    borderLeft: '2px solid #6366f1'
-                  }}>
-                    {item.result}
+          {view === 'activity' ? (
+            history.length === 0 ? (
+              <p style={{ opacity: 0.3, textAlign: 'center', padding: '2rem' }}>No recent activity</p>
+            ) : (
+              history.map((item) => (
+                <div key={item.id} className="history-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span style={{ fontWeight: 600, color: '#a855f7' }}>{item.action}</span>
+                    <span style={{ fontSize: '0.8rem', opacity: 0.4 }}>
+                      {new Date(item.timestamp).toLocaleTimeString()}
+                    </span>
                   </div>
-                )}
-              </div>
-            ))
+                  <p style={{ margin: '4px 0', opacity: 0.8 }}>{item.prompt || 'Local system action'}</p>
+                  {item.result && (
+                    <div style={{
+                      marginTop: '10px',
+                      padding: '12px',
+                      background: 'rgba(0,0,0,0.2)',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontFamily: 'monospace',
+                      borderLeft: '2px solid #6366f1',
+                      whiteSpace: 'pre-wrap'
+                    }}>
+                      {item.result}
+                    </div>
+                  )}
+                </div>
+              ))
+            )
+          ) : (
+            <div style={{ padding: '10px', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+              {logs.map((log) => (
+                <div key={log.id} style={{ marginBottom: '6px', color: log.type === 'error' ? '#ff4444' : log.type === 'warn' ? '#ffaa00' : log.type === 'agent' ? '#00eeff' : '#ffffff', opacity: 0.9 }}>
+                  <span style={{ opacity: 0.4, marginRight: '8px' }}>[{new Date(log.timestamp).toLocaleTimeString()}]</span>
+                  <span style={{ fontWeight: 'bold', marginRight: '8px' }}>{log.type.toUpperCase()}:</span>
+                  {log.message}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
