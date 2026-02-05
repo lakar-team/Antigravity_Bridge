@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { ref, onValue, push, set } from 'firebase/database';
+import { ref, onValue, push, set, DataSnapshot } from 'firebase/database';
 import { db } from './firebase';
-import { Terminal, Send, Cpu, Activity, LayoutGrid } from 'lucide-react';
+import { Terminal, Send, Activity } from 'lucide-react';
 import './App.css';
 
 interface Message {
@@ -10,6 +10,7 @@ interface Message {
   processed: boolean;
   result?: string;
   timestamp: number;
+  prompt?: string;
 }
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
   useEffect(() => {
     // Listen for Online Status
     const statusRef = ref(db, 'bridge/status');
-    onValue(statusRef, (snapshot) => {
+    onValue(statusRef, (snapshot: DataSnapshot) => {
       if (snapshot.exists()) setStatus(snapshot.val());
     });
 
@@ -29,16 +30,16 @@ function App() {
     const commandsRef = ref(db, 'bridge/commands');
     const responsesRef = ref(db, 'bridge/responses');
 
-    onValue(commandsRef, (cmdSnap) => {
+    onValue(commandsRef, (cmdSnap: DataSnapshot) => {
       const cmds = cmdSnap.val() || {};
-      onValue(responsesRef, (respSnap) => {
+      onValue(responsesRef, (respSnap: DataSnapshot) => {
         const resps = respSnap.val() || {};
 
         const combined = Object.keys(cmds).map(id => ({
           id,
           ...cmds[id],
           result: resps[id]?.result
-        })).sort((a, b) => b.timestamp - a.timestamp);
+        })).sort((a: Message, b: Message) => b.timestamp - a.timestamp);
 
         setHistory(combined);
       });
