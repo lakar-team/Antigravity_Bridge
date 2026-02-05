@@ -11,6 +11,7 @@ interface Message {
   result?: string;
   timestamp: number;
   prompt?: string;
+  requiresInput?: boolean;
 }
 
 interface LogEntry {
@@ -82,6 +83,17 @@ function App() {
 
     setCommand('');
     setLoading(false);
+  };
+
+  const handleInput = async (id: string, value: string) => {
+    const responsesRef = ref(db, `bridge/responses/${id}`);
+    await set(responsesRef, {
+      result: value,
+      timestamp: Date.now()
+    });
+    // Mark as processed if it was an input request
+    const cmdRef = ref(db, `bridge/commands/${id}/processed`);
+    await set(cmdRef, true);
   };
 
   return (
@@ -167,6 +179,18 @@ function App() {
                       whiteSpace: 'pre-wrap'
                     }}>
                       {item.result}
+                    </div>
+                  )}
+                  {item.requiresInput && !item.processed && (
+                    <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
+                      <button
+                        onClick={() => handleInput(item.id, "ACCEPT")}
+                        style={{ background: '#22c55e', padding: '8px 16px', fontSize: '0.8rem' }}
+                      >Accept</button>
+                      <button
+                        onClick={() => handleInput(item.id, "DENY")}
+                        style={{ background: '#ef4444', padding: '8px 16px', fontSize: '0.8rem' }}
+                      >Deny</button>
                     </div>
                   )}
                 </div>
