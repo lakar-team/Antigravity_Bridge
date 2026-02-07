@@ -1,0 +1,37 @@
+{
+    "name": "adam-auto-accept",
+    "displayName": "Adam Auto Accept",
+    "description": "Personal auto-accept extension for Antigravity agent steps.",
+    "version": "1.0.1",
+    "icon": "icon.png",
+    "publisher": "adam",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/user/adam-auto-accept"
+    },
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension.js",
+    "categories": [
+        "Other"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "adam.autoaccept.toggle",
+                "title": "Toggle Adam Auto-Accept"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "adam.autoaccept.toggle",
+                "key": "ctrl+alt+shift+u",
+                "mac": "cmd+alt+shift+u"
+            }
+        ]
+    }
+}
