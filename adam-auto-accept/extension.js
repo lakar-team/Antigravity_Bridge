@@ -10,7 +10,9 @@ const COMMANDS_TO_TRY = [
     'antigravity.terminalCommand.accept',
     'antigravity.command.accept',
     'antigravity.prioritized.agentAcceptFocusedHunk',
-    'antigravity.terminalCommand.run'
+    'antigravity.terminalCommand.run',
+    'antigravity.trust.accept',
+    'antigravity.action.execute'
 ];
 
 function activate(context) {
@@ -67,7 +69,7 @@ function startLoop() {
                 // Ignore errors (command might not be applicable or available)
             }
         }
-    }, 500);
+    }, 250);
 }
 
 function deactivate() {
