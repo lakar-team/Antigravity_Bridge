@@ -320,44 +320,6 @@ function App() {
                     </span>
                   </div>
                   <p style={{ margin: '8px 0', fontSize: '1rem', fontWeight: 500 }}>{item.prompt}</p>
-                  {view === 'chat' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', minHeight: '400px' }}>
-                      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', padding: '10px' }}>
-                        {chat.length === 0 && (
-                          <div style={{ textAlign: 'center', opacity: 0.3, marginTop: '100px' }}>
-                            <MessageSquare size={48} style={{ margin: '0 auto 12px' }} />
-                            <div>Waiting for swarm communication...</div>
-                          </div>
-                        )}
-                        {chat.map(msg => (
-                          <div key={msg.id} style={{
-                            alignSelf: msg.from === 'PRIMARY_IDE_AGENT' ? 'flex-end' : 'flex-start',
-                            maxWidth: '85%',
-                            background: msg.from === 'PRIMARY_IDE_AGENT' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-                            border: msg.from === 'PRIMARY_IDE_AGENT' ? '1px solid rgba(168, 85, 247, 0.2)' : '1px solid rgba(59, 130, 246, 0.2)',
-                            padding: '12px 16px',
-                            borderRadius: '16px',
-                            borderBottomRightRadius: msg.from === 'PRIMARY_IDE_AGENT' ? '4px' : '16px',
-                            borderBottomLeftRadius: msg.from === 'PRIMARY_IDE_AGENT' ? '16px' : '4px'
-                          }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px', marginBottom: '4px' }}>
-                              <span style={{
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
-                                color: msg.from === 'PRIMARY_IDE_AGENT' ? '#d8b4fe' : '#93c5fd'
-                              }}>
-                                {msg.from}
-                              </span>
-                              <span style={{ fontSize: '0.6rem', opacity: 0.4 }}>
-                                {new Date(msg.timestamp).toLocaleTimeString()}
-                              </span>
-                            </div>
-                            <div style={{ fontSize: '0.9rem', lineHeight: 1.5 }}>{msg.text}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                   {item.result && (
                     <div style={{
                       marginTop: '12px',
@@ -388,6 +350,45 @@ function App() {
                 </div>
               ))
             )
+          )}
+
+          {view === 'chat' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', minHeight: '400px' }}>
+              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', padding: '10px' }}>
+                {chat.length === 0 && (
+                  <div style={{ textAlign: 'center', opacity: 0.3, marginTop: '100px' }}>
+                    <MessageSquare size={48} style={{ margin: '0 auto 12px' }} />
+                    <div>Waiting for swarm communication...</div>
+                  </div>
+                )}
+                {chat.map(msg => (
+                  <div key={msg.id} style={{
+                    alignSelf: msg.from === 'PRIMARY_IDE_AGENT' ? 'flex-end' : 'flex-start',
+                    maxWidth: '85%',
+                    background: msg.from === 'PRIMARY_IDE_AGENT' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                    border: msg.from === 'PRIMARY_IDE_AGENT' ? '1px solid rgba(168, 85, 247, 0.2)' : '1px solid rgba(59, 130, 246, 0.2)',
+                    padding: '12px 16px',
+                    borderRadius: '16px',
+                    borderBottomRightRadius: msg.from === 'PRIMARY_IDE_AGENT' ? '4px' : '16px',
+                    borderBottomLeftRadius: msg.from === 'PRIMARY_IDE_AGENT' ? '16px' : '4px'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px', marginBottom: '4px' }}>
+                      <span style={{
+                        fontSize: '0.7rem',
+                        fontWeight: 800,
+                        color: msg.from === 'PRIMARY_IDE_AGENT' ? '#d8b4fe' : '#93c5fd'
+                      }}>
+                        {msg.from}
+                      </span>
+                      <span style={{ fontSize: '0.6rem', opacity: 0.4 }}>
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.9rem', lineHeight: 1.5 }}>{msg.text}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {view === 'registry' && (
