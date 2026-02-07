@@ -12,7 +12,11 @@ const COMMANDS_TO_TRY = [
     'antigravity.prioritized.agentAcceptFocusedHunk',
     'antigravity.terminalCommand.run',
     'antigravity.trust.accept',
-    'antigravity.action.execute'
+    'antigravity.action.execute',
+    'antigravity.terminal.run',
+    'antigravity.run',
+    'antigravity.executeAction',
+    'workbench.action.terminal.runSelectedText'
 ];
 
 function activate(context) {
