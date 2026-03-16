@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# ?? ANTIGRAVITY BRIDGE: SWARM PROTOCOL
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Version](https://img.shields.io/badge/Version-1.2.0--ALPHA-blueviolet)
+![Protocol](https://img.shields.io/badge/Swarm_Protocol-Active-emerald)
+![Platform](https://img.shields.io/badge/Platform-Node.js_%2F_Vite-blue)
 
-Currently, two official plugins are available:
+**Antigravity Bridge** is a low-latency, automated task-polling system designed to bridge the gap between remote cloud dashboards and local agency environments. It serves as the "nervous system" of the Antigravity Swarm, enabling seamless, hands-free task execution.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ?? The "Swarm" Architecture
 
-## React Compiler
+Unlike traditional agent setups, the **Bridge** protocol allows a distributed network of agents to synchronize via a central heartbeat. 
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- ??? **Long-Polling Engine**: Uses a specialized Node.js bridge (`bridge.js`) to maintain a "live" connection with remote task queues.
+- ? **Auto-Polling**: Automatically detects and processes incoming signals without requiring manual terminal input.
+- ?? **Bi-Directional Sync**: A unified bridge between the **Lakar Web Dashboard** (React/Vite) and the local filesystem operations.
 
-## Expanding the ESLint configuration
+## ? Core Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- ??? **Task Satellite**: A lightweight Node.js listener that stays awake to receive instructions from mobile or web interfaces.
+- ??? **Auto-Accept Protocol**: Configurable logic (`adam-auto-accept/`) that allows the agent to start jobs immediately based on safety rules.
+- ?? **Web Control Interface**: A high-fidelity management console (located in `web-control/`) for real-time monitoring of the swarm status.
+- ?? **Dynamic Workflow Injection**: Injects `.agent/workflows` into the local system on-the-fly when a remote task is received.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ??? Quick Start
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Initialize the Bridge
+```bash
+npm install
+node bridge.js
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Launch the Control Center
+```bash
+npm run dev
 ```
+
+### 3. Configure the Swarm
+Copy `.env.example` to `.env` and configure your remote endpoints.
+
+## ?? Project Structure
+
+- `bridge.js`: The heart of the swarm protocol; handles signal polling and execution.
+- `web-control/`: React-based dashboard for monitoring the bridge state.
+- `auto_polling_plan.md`: The technical blueprint for the protocol's evolution.
+- `agent2.js`: Secondary agent logic for handled tasks.
+
+---
+
+### ??? Swarm Connectivity Status
+> [!IMPORTANT]
+> Ensure your local firewall allows the Bridge to maintain stable outbound long-polling connections to the Antigravity Cloud.
+
+&copy; 2026 Lakar Lab / Advanced Agency Framework
