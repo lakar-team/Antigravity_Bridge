@@ -371,18 +371,46 @@ function App() {
             )
           )}
           
-          <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '20px' }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 800, marginBottom: '12px', color: '#a855f7' }}>📣 ANNOUNCE TO ALL AGENTS</div>
-            <form onSubmit={sendChatMessage} style={{ display: 'flex', gap: '10px' }}>
+          <div className="announcement-bar" style={{ 
+            marginTop: '20px', 
+            borderTop: '1px solid rgba(255,255,255,0.05)', 
+            paddingTop: '20px',
+            position: 'sticky',
+            bottom: '0',
+            background: 'linear-gradient(to top, rgba(10,12,24,1) 80%, rgba(10,12,24,0))',
+            paddingBottom: '20px'
+          }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 800, marginBottom: '10px', color: '#a855f7', opacity: 0.8, letterSpacing: '1px' }}>📣 SWARM BROADCAST</div>
+            <form onSubmit={sendChatMessage} style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.03)', padding: '6px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
               <input 
                 type="text" 
-                placeholder="Message the swarm collective..." 
+                placeholder="Message the collective..." 
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
-                style={{ flex: 1, height: '45px', margin: 0 }} 
+                style={{ 
+                  flex: 1, 
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '10px 15px',
+                  color: 'white',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                  margin: 0
+                }} 
               />
-              <button type="submit" style={{ width: 'auto', padding: '0 25px', background: '#a855f7' }}>
-                <Send size={18} />
+              <button type="submit" style={{ 
+                width: '45px', 
+                height: '45px', 
+                borderRadius: '10px',
+                background: '#a855f7',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Send size={18} color="white" />
               </button>
             </form>
           </div>

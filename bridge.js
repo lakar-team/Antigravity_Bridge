@@ -142,7 +142,54 @@ fs.watchFile(LOG_FILE, { interval: 1000 }, (curr, prev) => {
     }
 });
 
-// 5. Watch Inbox for Activity Status
+// 5. Chat Echo (USER -> Logs)
+let lastChatTimestamp = Date.now();
+https.get(`${DB_URL}/bridge/chat.json`, (res) => {
+    let data = '';
+    res.on('data', chunk => data += chunk);
+    res.on('end', () => {
+        try {
+            const chat = JSON.parse(data);
+            if (chat) {
+                lastChatTimestamp = Math.max(...Object.values(chat).map(c => c.timestamp || 0));
+            }
+        } catch (e) {}
+    });
+});
+
+setInterval(() => {
+    https.get(`${DB_URL}/bridge/chat.json?orderBy="timestamp"&startAt=${lastChatTimestamp + 1}`, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+            try {
+                const chat = JSON.parse(data);
+                if (chat) {
+                    Object.values(chat).forEach(msg => {
+                        if (msg.from === 'USER' && msg.timestamp > lastChatTimestamp) {
+                            fs.appendFileSync(LOG_FILE, `[ANNOUNCEMENT] User: ${msg.text}\n`);
+                            
+                            // Drop into Inbox as a task for the AI
+                            const chatId = `chat_${msg.timestamp}`;
+                            const chatTask = {
+                                action: "CHAT_MESSAGE",
+                                text: msg.text,
+                                from: msg.from,
+                                timestamp: msg.timestamp,
+                                processed: false
+                            };
+                            fs.writeFileSync(path.join(INBOX_PATH, `${chatId}.json`), JSON.stringify(chatTask));
+                            
+                            lastChatTimestamp = msg.timestamp;
+                        }
+                    });
+                }
+            } catch (e) {}
+        });
+    });
+}, 5000);
+
+// 6. Watch Inbox for Activity Status
 fs.watch(INBOX_PATH, (eventType, filename) => {
     if (filename && filename.endsWith('.json')) {
         dbPatch('bridge/status', { activity: "Task Received" });

@@ -85,6 +85,36 @@ async function runSimulation() {
 }
 
 runSimulation();
-setInterval(heartbeat, 10000);
+setInterval(heartbeat, 30000);
+
+// Chat Monitoring Logic (Adaptive Response)
+let lastChatSeen = Date.now();
+setInterval(async () => {
+    try {
+        const res = await fetch(`${DB_URL}/bridge/chat.json?orderBy="timestamp"&startAt=${lastChatSeen + 1}`);
+        const chat = await res.json();
+        if (chat) {
+            const latest = Object.values(chat).sort((a,b) => b.timestamp - a.timestamp)[0];
+            if (latest.from === 'USER' && latest.timestamp > lastChatSeen) {
+                lastChatSeen = latest.timestamp;
+                
+                // Respond with a random agent logic
+                const agents = ["RESEARCH_BOT", "SYSTEM_ARCHITECT", "QA_INSPECTOR"];
+                const responder = agents[Math.floor(Math.random() * agents.length)];
+                const responses = [
+                    "Acknowledged. Integrating mission updates into current topology.",
+                    "Directives received. Swarm registry synchronized with User instruction.",
+                    "Processing announcement. All systems stand by for task execution."
+                ];
+                
+                dbPost('bridge/chat', {
+                    from: responder,
+                    text: `📡 ${responses[Math.floor(Math.random() * responses.length)]}`,
+                    timestamp: Date.now()
+                });
+            }
+        }
+    } catch (e) {}
+}, 5000);
 
 console.log("🚀 Swarm Simulator Heartbeat active. 3 Agents injected into registry.");
